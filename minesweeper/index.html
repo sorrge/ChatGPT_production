@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+  <title>ChatGPT Minesweeper</title>
+  <style>
+    /* define the styles for the game grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      /* add the margin: auto property here to center the element horizontally */
+      margin: auto;      
+      margin-top: 20px;      
+    }
+    .grid-8x8 {
+      width: 240px;
+      height: 240px;
+    }
+    .grid-16x16 {
+      width: 480px;
+      height: 480px;
+    }
+    .cell {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+      user-select: none;
+      width: 30px;
+      height: 30px;      
+    }
+    .hidden {
+      background-color: gray;
+    }
+    .revealed {
+      background-color: white;
+    }
+    .revealed-mine {
+      background-color: red;
+    }
+    .flagged {
+      background-color: yellow;
+    }
+    .empty {
+      background-color: white;
+    }
+    title {
+      /* add the text-align: center property here to center the text horizontally */
+      text-align: center;
+    }
+    h1 {
+      /* add the text-align: center property here to center the text horizontally */
+      text-align: center;
+    }    
+    #beginner, #intermediate, #expert {
+      display: inline-block;
+    }
+
+    #button-container {
+      text-align: center;
+    }    
+  </style>
+</head>
+<body>
+  <h1>ChatGPT Minesweeper</h1>
+  <h2 style="text-align: center;">Time: <span id="timer">0</span></h2>
+  <div id="button-container">
+    <button id="beginner">Beginner</button>
+    <button id="intermediate">Intermediate</button>  
+    <button id="expert">Expert</button>
+  </div>
+  
+
+  <div id="grid" class="grid">
+    <!-- this is where the game grid will be generated -->
+  </div>
+  <script src="minesweeper.js"></script>
+  <script>
+  </script>
+  <h3>How to play:</h3>
+  <ul>
+    <li>Left click to reveal a cell.</li>
+    <li>Right click to flag a cell as a mine.</li>
+    <li>Left click on a revealed cell with all neighboring mines flagged to reveal all neighboring cells.</li>
+    <li>Win the game by revealing all non-mine cells.</li>
+    <li>Lose the game by revealing a mine cell.</li>
+    <li>Use the level buttons to start a new game at a different difficulty level.</li>
+  </ul>
+  <h3>Playing tips:</h3>
+  <ul>
+    <li>Try to use the fewest number of flags possible to win the game.</li>
+    <li>If you're unsure about a cell, leave it un-revealed. It's better to be safe than sorry!</li>
+    <li>Pay attention to the numbers on revealed cells. They indicate the number of mines in the surrounding 8 cells.</li>
+    <li>Use the numbers to your advantage and make deductions about the location of mines in the grid.</li>
+    <li>Use the timer to challenge yourself and try to beat your best time.</li>
+  </ul>
+</body

@@ -1,0 +1,97 @@
+msg     2 : line   1   <!doctype html>
+msg     2 : line   2   <html>
+msg     2 : line   3   <head>
+msg    12 : line   4     <title>ChatGPT Minesweeper</title>
+msg     2 : line   5     <style>
+msg     2 : line   6       /* define the styles for the game grid */
+msg     2 : line   7       .grid {
+msg     2 : line   8         display: grid;
+msg   141 : line   3         grid-template-columns: repeat(8, 1fr);
+msg   141 : line   4         grid-template-rows: repeat(8, 1fr);
+msg     9 : line   4         /* add the margin: auto property here to center the element horizontally */
+msg     9 : line   5         margin: auto;      
+msg   142 : line   2         margin-top: 20px;      
+msg     1 : line   9       }
+msg    78 : line  39       .grid-8x8 {
+msg    78 : line  40         width: 240px;
+msg    78 : line  41         height: 240px;
+msg     1 : line   9       }
+msg    78 : line  43       .grid-16x16 {
+msg    78 : line  44         width: 480px;
+msg    78 : line  45         height: 480px;
+msg     1 : line   9       }
+msg     2 : line  12       .cell {
+msg     2 : line  13         display: flex;
+msg     2 : line  14         justify-content: center;
+msg     2 : line  15         align-items: center;
+msg     2 : line  16         font-size: 20px;
+msg     2 : line  17         user-select: none;
+msg     5 : line  14         width: 30px;
+msg     5 : line  15         height: 30px;      
+msg     1 : line   9       }
+msg     2 : line  19       .hidden {
+msg     2 : line  20         background-color: gray;
+msg     1 : line   9       }
+msg     2 : line  22       .revealed {
+msg     2 : line  23         background-color: white;
+msg     1 : line   9       }
+msg     6 : line   1       .revealed-mine {
+msg     6 : line   2         background-color: red;
+msg     1 : line   9       }
+msg     2 : line  28       .flagged {
+msg     2 : line  29         background-color: yellow;
+msg     1 : line   9       }
+msg    10 : line   1       .empty {
+msg     2 : line  23         background-color: white;
+msg     1 : line   9       }
+msg    12 : line  16       title {
+msg    12 : line  17         /* add the text-align: center property here to center the text horizontally */
+msg    12 : line  18         text-align: center;
+msg     1 : line   9       }
+msg    13 : line  17       h1 {
+msg    12 : line  17         /* add the text-align: center property here to center the text horizontally */
+msg    12 : line  18         text-align: center;
+msg     1 : line   9       }    
+msg   134 : line   1       #beginner, #intermediate, #expert {
+msg   134 : line   2         display: inline-block;
+msg     1 : line   9       }
+
+msg   134 : line   5       #button-container {
+msg    12 : line  18         text-align: center;
+msg     1 : line   9       }    
+msg     2 : line  31     </style>
+msg     2 : line  32   </head>
+msg     2 : line  33   <body>
+msg    13 : line  10     <h1>ChatGPT Minesweeper</h1>
+msg    36 : line   4     <h2 style="text-align: center;">Time: <span id="timer">0</span></h2>
+msg   134 : line   8     <div id="button-container">
+msg    37 : line  18       <button id="beginner">Beginner</button>
+msg    37 : line  19       <button id="intermediate">Intermediate</button>  
+msg   137 : line   9       <button id="expert">Expert</button>
+msg     2 : line  37     </div>
+  
+
+msg     2 : line  35     <div id="grid" class="grid">
+msg     2 : line  36       <!-- this is where the game grid will be generated -->
+msg     2 : line  37     </div>
+msg     2 : line  38     <script src="minesweeper.js"></script>
+msg     2 : line  39     <script>
+msg     2 : line  38     </script>
+msg   144 : line   1     <h3>How to play:</h3>
+msg   144 : line   2     <ul>
+msg   145 : line   3       <li>Left click to reveal a cell.</li>
+msg   145 : line   4       <li>Right click to flag a cell as a mine.</li>
+msg   145 : line   5       <li>Left click on a revealed cell with all neighboring mines flagged to reveal all neighboring cells.</li>
+msg   145 : line   6       <li>Win the game by revealing all non-mine cells.</li>
+msg   145 : line   7       <li>Lose the game by revealing a mine cell.</li>
+msg   145 : line   8       <li>Use the level buttons to start a new game at a different difficulty level.</li>
+msg   144 : line   7     </ul>
+msg   145 : line  10     <h3>Playing tips:</h3>
+msg   144 : line   2     <ul>
+msg   145 : line  12       <li>Try to use the fewest number of flags possible to win the game.</li>
+msg   145 : line  13       <li>If you're unsure about a cell, leave it un-revealed. It's better to be safe than sorry!</li>
+msg   145 : line  14       <li>Pay attention to the numbers on revealed cells. They indicate the number of mines in the surrounding 8 cells.</li>
+msg   145 : line  15       <li>Use the numbers to your advantage and make deductions about the location of mines in the grid.</li>
+msg   145 : line  16       <li>Use the timer to challenge yourself and try to beat your best time.</li>
+msg   144 : line   7     </ul>
+msg     2 : line  88   </body

@@ -1,0 +1,457 @@
+msg    53 : line   1   // define the game grid dimensions and the number of mines as regular variables
+msg    51 : line   1   let WIDTH = 8;
+msg    51 : line   2   let HEIGHT = 8;
+msg    53 : line   4   let NUM_MINES = 10;
+
+msg     7 : line  21   /* add the gameOver variable here */
+msg     7 : line  22   let gameOver = false;
+msg    91 : line   6   let gameOverElement = document.getElementById('game-over');
+
+msg    14 : line  21   /* add the minesLeft variable here and initialize it to the total number of mines */
+msg    14 : line  22   let minesLeft = NUM_MINES;
+msg    17 : line  24   /* add the minesLeftElement variable here and initialize it to null */
+msg    17 : line  25   let minesLeftElement = null;
+msg    29 : line   1   let firstMove = true;
+msg    35 : line   1   let timer = 0;
+msg    57 : line   1   let timerElement = null
+msg    68 : line   1   let timerID = null;
+
+
+msg     1 : line  51   // define a function to reveal a cell
+msg     1 : line  52   function reveal(x, y) {
+msg    25 : line  16     if (grid[x][y].isFlagged || grid[x][y].isRevealed || gameOver) {
+msg     8 : line  10       return;
+msg     1 : line   9     }
+
+msg     1 : line  54     grid[x][y].isRevealed = true;
+
+msg    43 : line   1     if (firstMove && !gameOver) {
+msg    28 : line   9       firstMove = false;
+msg     1 : line  27       if (grid[x][y].isMine) {
+msg    28 : line  11         let freeCells = [];
+msg     1 : line   7         for (let i = 0; i < WIDTH; i++) {
+msg    28 : line  13           for (let j = 0; j < HEIGHT; j++) {
+msg    28 : line  14             if (!grid[i][j].isMine) {
+msg    28 : line  15               freeCells.push({ x: i, y: j });
+msg     1 : line   9             }
+msg     1 : line   9           }
+msg     1 : line   9         }
+
+msg    28 : line  20         let newLocation = freeCells[Math.floor(Math.random() * freeCells.length)];
+msg    28 : line  21         grid[x][y].isMine = false;
+msg    28 : line  22         grid[newLocation.x][newLocation.y].isMine = true;
+
+msg    34 : line  17         // Recalculate surrounding mine counts
+msg     1 : line   7         for (let i = 0; i < WIDTH; i++) {
+msg    28 : line  13           for (let j = 0; j < HEIGHT; j++) {
+msg    34 : line  20             grid[i][j].surroundingMines = 0;
+msg     1 : line  38             for (let dx = -1; dx <= 1; dx++) {
+msg     1 : line  39               for (let dy = -1; dy <= 1; dy++) {
+msg    34 : line  23                 if (i + dx >= 0 && i + dx < WIDTH && j + dy >= 0 && j + dy < HEIGHT) {
+msg    34 : line  24                   if (grid[i + dx][j + dy].isMine) {
+msg    34 : line  25                     grid[i][j].surroundingMines++;
+msg     1 : line   9                   }
+msg     1 : line   9                 }
+msg     1 : line   9               }
+msg     1 : line   9             }
+msg     1 : line   9           }
+msg     1 : line   9         }   
+msg     1 : line   9       }  
+    
+msg    35 : line  10       // Start the timer
+msg    44 : line  32       timerID = setInterval(() => {
+msg    35 : line  12         timer++;
+msg    47 : line  13         render(gridElement);
+msg    35 : line  14       }, 1000);       
+msg     1 : line   9     }
+
+msg     1 : line  27     if (grid[x][y].isMine) {
+msg     8 : line  32       gameOver = true;
+
+msg    25 : line  25       /* create and display the "Game Over" message */
+msg    95 : line   1       displayGameOverMessage()
+
+    
+msg    44 : line  43       // Clear the timer interval
+msg    44 : line  44       clearInterval(timerID);
+    
+msg     8 : line  10       return;
+msg     1 : line   9     }
+
+msg    20 : line  24     let remaining = 0;
+msg     1 : line  12     for (let x = 0; x < WIDTH; x++) {
+msg     1 : line  13       for (let y = 0; y < HEIGHT; y++) {
+msg    21 : line   2         if (!grid[x][y].isRevealed && !grid[x][y].isFlagged) {
+msg    21 : line   3           remaining++;
+msg     1 : line   9         }
+msg     1 : line   9       }
+msg     1 : line   9     }
+
+msg    25 : line   1     if (remaining === 0 && !gameOver) {
+msg     8 : line  32       gameOver = true;
+
+msg    25 : line   4       /* create and display the "All clear!" message */
+msg   101 : line  25       displayAllClearMessage()
+
+msg    44 : line  43       // Clear the timer interval
+msg    44 : line  44       clearInterval(timerID);    
+msg     1 : line   9     }
+
+msg     1 : line  57     if (grid[x][y].surroundingMines === 0) {
+msg     1 : line  38       for (let dx = -1; dx <= 1; dx++) {
+msg     1 : line  39         for (let dy = -1; dy <= 1; dy++) {
+msg     1 : line  40           if (x + dx >= 0 && x + dx < WIDTH && y + dy >= 0 && y + dy < HEIGHT) {
+msg     8 : line  38             reveal(x + dx, y + dy);
+msg     1 : line   9           }
+msg     1 : line   9         }
+msg     1 : line   9       }
+msg     1 : line   9     }
+msg     1 : line   9   }
+
+
+
+msg     1 : line  71   // define a function to flag a cell
+msg     1 : line  72   function flag(x, y) {
+msg     2 : line  69     if (grid[x][y].isRevealed) {
+msg     8 : line  10       return;
+msg     1 : line   9     }
+msg     2 : line  76     if (grid[x][y].isFlagged) {
+msg    14 : line  30       minesLeft++;
+msg    14 : line  31       grid[x][y].isFlagged = false;
+msg     1 : line  29     } else {
+msg    14 : line  34       minesLeft--;
+msg     1 : line  74       grid[x][y].isFlagged = true;
+msg     1 : line   9     }
+
+msg    20 : line  14     let flags = 0;
+msg     1 : line  12     for (let x = 0; x < WIDTH; x++) {
+msg     1 : line  13       for (let y = 0; y < HEIGHT; y++) {
+msg     2 : line  76         if (grid[x][y].isFlagged) {
+msg    20 : line  18           flags++;
+msg     1 : line   9         }
+msg     1 : line   9       }
+msg     1 : line   9     }
+
+msg    20 : line  23     if (flags === NUM_MINES) {
+msg    20 : line  24       let remaining = 0;
+msg     1 : line  12       for (let x = 0; x < WIDTH; x++) {
+msg     1 : line  13         for (let y = 0; y < HEIGHT; y++) {
+msg    21 : line   2           if (!grid[x][y].isRevealed && !grid[x][y].isFlagged) {
+msg    21 : line   3             remaining++;
+msg     1 : line   9           }
+msg     1 : line   9         }
+msg     1 : line   9       }
+
+msg    21 : line   7       if (remaining === 0) {
+msg     8 : line  32         gameOver = true;
+
+msg   101 : line  25         displayAllClearMessage()
+msg     1 : line   9       }
+msg     1 : line   9     }
+msg     1 : line   9   }
+
+msg    31 : line   5   function rightClick(x, y) {
+msg    31 : line   6     if (grid[x][y].isRevealed && !grid[x][y].isFlagged && !gameOver) {
+msg    31 : line   7       let flagged = 0;
+msg     1 : line  38       for (let dx = -1; dx <= 1; dx++) {
+msg     1 : line  39         for (let dy = -1; dy <= 1; dy++) {
+msg     1 : line  40           if (x + dx >= 0 && x + dx < WIDTH && y + dy >= 0 && y + dy < HEIGHT) {
+msg    31 : line  11             if (grid[x + dx][y + dy].isFlagged) {
+msg    31 : line  12               flagged++;
+msg     1 : line   9             }
+msg     1 : line   9           }
+msg     1 : line   9         }
+msg     1 : line   9       }
+
+msg    31 : line  18       if (flagged === grid[x][y].surroundingMines) {
+msg     1 : line  38         for (let dx = -1; dx <= 1; dx++) {
+msg     1 : line  39           for (let dy = -1; dy <= 1; dy++) {
+msg     1 : line  40             if (x + dx >= 0 && x + dx < WIDTH && y + dy >= 0 && y + dy < HEIGHT) {
+msg    32 : line  18               if (!grid[x + dx][y + dy].isFlagged && !grid[x + dx][y + dy].isRevealed) {
+msg     8 : line  38                 reveal(x + dx, y + dy);
+msg     1 : line   9               }
+msg     1 : line   9             }
+msg     1 : line   9           }
+msg     1 : line   9         }
+msg     1 : line   9       }
+msg     1 : line   9     }
+msg     1 : line   9   }
+
+msg    69 : line   2   function init(width, height) {
+msg    75 : line   1     // Get the grid element
+msg    75 : line   2     const gridElement = document.querySelector('.grid');
+
+msg    79 : line   3     // Set the initial grid dimensions
+msg    79 : line   7     gridElement.style.width = `${width * 30}px`;
+msg    79 : line   8     gridElement.style.height = `${height * 30}px`;
+
+msg     1 : line   5     // create the game grid
+msg     1 : line   6     grid = new Array(WIDTH);
+msg     1 : line   7     for (let i = 0; i < WIDTH; i++) {
+msg     1 : line   8       grid[i] = new Array(HEIGHT);
+msg     1 : line   9     }
+
+msg     1 : line  11     // initialize the game grid
+msg     1 : line  12     for (let x = 0; x < WIDTH; x++) {
+msg     1 : line  13       for (let y = 0; y < HEIGHT; y++) {
+msg     1 : line  14         grid[x][y] = {
+msg     1 : line  15           isMine: false,
+msg     1 : line  16           isRevealed: false,
+msg     1 : line  17           isFlagged: false,
+msg     1 : line  18           surroundingMines: 0
+msg     1 : line  19         };
+msg     1 : line   9       }
+msg     1 : line   9     }
+
+msg     1 : line  23     // place the mines in random locations
+msg    56 : line  26     for (let i = 0; i < NUM_MINES; i++) {
+msg     1 : line  25       let x = Math.floor(Math.random() * WIDTH);
+msg     1 : line  26       let y = Math.floor(Math.random() * HEIGHT);
+msg     1 : line  27       if (grid[x][y].isMine) {
+msg     1 : line  28         i--;
+msg     1 : line  29       } else {
+msg     1 : line  30         grid[x][y].isMine = true;
+msg     1 : line   9       }
+msg     1 : line   9     }
+
+msg     1 : line  34     // calculate the number of surrounding mines for each cell
+msg     1 : line  12     for (let x = 0; x < WIDTH; x++) {
+msg     1 : line  13       for (let y = 0; y < HEIGHT; y++) {
+msg     1 : line  37         if (!grid[x][y].isMine) {
+msg     1 : line  38           for (let dx = -1; dx <= 1; dx++) {
+msg     1 : line  39             for (let dy = -1; dy <= 1; dy++) {
+msg     1 : line  40               if (x + dx >= 0 && x + dx < WIDTH && y + dy >= 0 && y + dy < HEIGHT) {
+msg     1 : line  41                 if (grid[x + dx][y + dy].isMine) {
+msg     1 : line  42                   grid[x][y].surroundingMines++;
+msg     1 : line   9                 }
+msg     1 : line   9               }
+msg     1 : line   9             }
+msg     1 : line   9           }
+msg     1 : line   9         }
+msg     1 : line   9       }
+msg     1 : line   9     }
+
+msg     1 : line   5     // create the game grid
+msg     1 : line  13     for (let y = 0; y < HEIGHT; y++) {
+msg     1 : line  12       for (let x = 0; x < WIDTH; x++) {  
+msg     2 : line  44         const cellElement = document.createElement('div');
+msg     2 : line  45         cellElement.classList.add('cell');
+msg     2 : line  46         cellElement.classList.add('hidden');
+msg     2 : line  47         cellElement.addEventListener('click', () => {
+msg     8 : line   8           /* check the gameOver variable here and return immediately if it is true */
+msg     7 : line  48           if (gameOver) {
+msg     8 : line  10             return;
+msg     1 : line   9           }
+msg     2 : line  48           reveal(x, y);
+msg    47 : line  13           render(gridElement);
+msg     2 : line  50         });
+msg     2 : line  51         cellElement.addEventListener('contextmenu', (event) => {
+msg     2 : line  52           event.preventDefault();
+msg     8 : line   8           /* check the gameOver variable here and return immediately if it is true */
+msg     7 : line  48           if (gameOver) {
+msg     8 : line  10             return;
+msg     1 : line   9           }
+msg     2 : line  53           flag(x, y);
+msg    31 : line   3           rightClick(x, y);
+msg    47 : line  13           render(gridElement);
+msg     2 : line  50         });
+msg     2 : line  56         gridElement.appendChild(cellElement);
+msg     1 : line   9       }
+msg     1 : line   9     }
+
+
+msg    29 : line   1     firstMove = true;  
+msg    35 : line  20     timerElement = document.getElementById('timer'); 
+
+msg    89 : line  17     // Set the gameOverElement and allClearElement variables
+msg    87 : line   1     gameOverElement = document.querySelector('.game-over');
+msg    89 : line  19     allClearElement = document.querySelector('.all-clear');  
+msg     1 : line   9   }
+
+msg     2 : line  60   // define a function to render the game grid
+msg    47 : line   2   function render(gridElement) {
+msg     1 : line  13     for (let y = 0; y < HEIGHT; y++) {
+msg     1 : line  12       for (let x = 0; x < WIDTH; x++) {
+msg   128 : line   4         const cellElement = gridElement.children[y * WIDTH + x];
+msg     2 : line  65         cellElement.classList.remove('hidden');
+msg     2 : line  66         cellElement.classList.remove('revealed');
+msg     2 : line  67         cellElement.classList.remove('mine');
+msg     2 : line  68         cellElement.classList.remove('flagged');
+msg     6 : line  12         cellElement.classList.remove('revealed-mine');
+msg    10 : line  17         cellElement.classList.remove('empty');
+msg    10 : line  18         /* add this line to remove the .empty class */
+
+msg     2 : line  69         if (grid[x][y].isRevealed) {
+msg     2 : line  70           cellElement.classList.add('revealed');
+msg     1 : line  27           if (grid[x][y].isMine) {
+msg     6 : line  17             cellElement.classList.add('revealed-mine');
+msg     1 : line  29           } else {
+msg    10 : line  24             /* add the .empty class here if the cell has no surrounding mines */
+msg     1 : line  57             if (grid[x][y].surroundingMines === 0) {
+msg    10 : line  26               cellElement.classList.add('empty');
+msg     1 : line  29             } else {
+msg     2 : line  74               cellElement.innerText = grid[x][y].surroundingMines;
+msg     1 : line   9             }            
+msg     1 : line   9           }
+msg     2 : line  76         } else if (grid[x][y].isFlagged) {
+msg     2 : line  77           cellElement.classList.add('flagged');
+msg     1 : line  29         } else {
+msg     2 : line  46           cellElement.classList.add('hidden');
+msg     1 : line   9         }
+msg     1 : line   9       }
+msg     1 : line   9     }
+
+msg    17 : line  55     /* create the minesLeftElement if it does not exist and update its innerText property */
+msg    17 : line  56     if (!minesLeftElement) {
+msg    15 : line  45       minesLeftElement = document.createElement('div');
+msg    16 : line  47       document.body.appendChild(minesLeftElement);
+msg     1 : line   9     }
+msg    15 : line  46     minesLeftElement.innerText = `Mines left: ${minesLeft}`;
+
+msg    19 : line   1     /* add this style to horizontally center the minesLeftElement */
+msg    19 : line   2     minesLeftElement.style.textAlign = 'center';
+
+msg     7 : line  47     /* check the gameOver variable here and display a "game over" message if necessary */
+msg    15 : line  46     minesLeftElement.innerText = `Mines left: ${minesLeft}`;
+msg    19 : line   2     minesLeftElement.style.textAlign = 'center';
+
+msg     7 : line  48     if (gameOver) {
+msg    20 : line  14       let flags = 0;
+msg     1 : line  12       for (let x = 0; x < WIDTH; x++) {
+msg     1 : line  13         for (let y = 0; y < HEIGHT; y++) {
+msg     2 : line  76           if (grid[x][y].isFlagged) {
+msg    20 : line  18             flags++;
+msg     1 : line   9           }
+msg     1 : line   9         }
+msg     1 : line   9       }
+
+msg    20 : line  23       if (flags === NUM_MINES) {
+msg   101 : line  25         displayAllClearMessage()
+msg     1 : line  29       } else {
+msg    95 : line   1         displayGameOverMessage()
+msg     1 : line   9       }
+msg     1 : line  29     } else {
+msg    35 : line  19       // Show the timer
+msg    35 : line  20       const timerElement = document.getElementById('timer');
+msg    65 : line   3       timerElement.textContent = timer;
+msg     1 : line   9     }
+msg     1 : line   9   }
+
+msg     2 : line  41   const gridElement = document.getElementById('grid');
+msg     1 : line   5   // create the game grid
+msg    69 : line  40   init(WIDTH, HEIGHT);
+
+msg     2 : line  85   // render the initial game grid
+msg    47 : line  13   render(gridElement);
+
+msg    50 : line   1   // define the function to change the difficulty level
+msg    50 : line   2   function changeLevel(width, height, mines) {
+msg    50 : line   3     WIDTH = width;
+msg    50 : line   4     HEIGHT = height;
+msg    50 : line   5     MINES = mines;
+msg    53 : line  16     NUM_MINES = mines;
+msg    52 : line   5     minesLeft = MINES;
+
+msg    55 : line   8     // clear the current game
+msg    44 : line  44     clearInterval(timerID);
+msg    35 : line   1     timer = 0;
+msg    29 : line   1     firstMove = true;
+msg     7 : line  22     gameOver = false;
+msg    44 : line  44     clearInterval(timerID);
+msg    71 : line  19     // reset the timer element
+msg    71 : line  20     timerElement.textContent = "0";
+msg    55 : line  14     minesLeftElement.textContent = '';
+msg   116 : line  18     // Remove the cells from the grid
+msg   116 : line  19     while (gridElement.firstChild) {
+msg   116 : line  20       gridElement.removeChild(gridElement.firstChild);
+msg     1 : line   9     }
+
+msg    75 : line   4     // Set the grid element's new dimensions
+msg    75 : line   5     gridElement.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
+msg    75 : line   6     gridElement.style.gridTemplateRows = `repeat(${height}, 1fr)`;  
+msg    80 : line  28     // Set the grid element's size
+msg    80 : line  29     // so that the cells are always 30px wide and high
+msg   103 : line  25     gridElement.style.width = `${WIDTH * 30}px`;
+msg   103 : line  26     gridElement.style.height = `${HEIGHT * 30}px`;
+
+msg    85 : line   1     // Clear game over message
+msg    85 : line   2     const gameOverElement = document.getElementById('game-over');
+msg    92 : line   2     if (gameOverElement) {
+msg    97 : line   6       gameOverElement.parentNode.removeChild(gameOverElement);
+msg     1 : line   9     }
+
+msg    85 : line   5     // Clear all clear message
+msg    85 : line   6     const allClearElement = document.getElementById('all-clear');
+msg    92 : line   7     if (allClearElement) {
+msg   109 : line  25       allClearElement.parentNode.removeChild(allClearElement);
+msg     1 : line   9     }
+
+msg    55 : line  15     // initialize the new game
+msg    69 : line  38     init(width, height);
+msg     1 : line   9   }
+
+
+msg    50 : line  10   // get the "Beginner" and "Intermediate" buttons
+msg    37 : line   1   const beginnerButton = document.getElementById('beginner');
+msg    37 : line  10   const intermediateButton = document.getElementById('intermediate');
+
+msg   137 : line  14   // attach event listeners to the level buttons
+msg   137 : line  15   document.getElementById('beginner').addEventListener('click', () => {
+msg    50 : line  16     changeLevel(8, 8, 10);
+msg     2 : line  50   });
+msg   137 : line  18   document.getElementById('intermediate').addEventListener('click', () => {
+msg    50 : line  19     changeLevel(16, 16, 40);
+msg     2 : line  50   });
+msg   137 : line  21   document.getElementById('expert').addEventListener('click', () => {
+msg   113 : line  31     changeLevel(30, 16, 99);
+msg     2 : line  50   });
+
+msg    95 : line   1   function displayGameOverMessage() {
+msg   100 : line   2     // Get the game over element, if it exists
+msg    91 : line   6     let gameOverElement = document.getElementById('game-over');
+
+msg   100 : line   5     // If the element doesn't exist, create it
+msg    94 : line   3     if (!gameOverElement) {
+msg     7 : line  49       gameOverElement = document.createElement('div');
+msg    94 : line   6       gameOverElement.id = 'game-over';
+msg     7 : line  51       gameOverElement.style.fontSize = '40px';
+msg     7 : line  52       gameOverElement.style.color = 'red';
+msg     7 : line  53       gameOverElement.style.position = 'absolute';
+msg     7 : line  54       gameOverElement.style.left = '50%';
+msg     7 : line  55       gameOverElement.style.top = '50%';
+msg    15 : line  56       gameOverElement.style.transform = 'translate(-50%, -50%)';
+msg   105 : line  14       gameOverElement.style.backgroundColor = 'white';
+msg   105 : line  15       gameOverElement.style.border = '5px solid red';
+msg   105 : line  16       gameOverElement.style.padding = '10px';    
+msg     8 : line   2       document.body.appendChild(gameOverElement);
+msg     1 : line   9     }
+
+msg   100 : line  18     // If the game is over, display the message
+msg     7 : line  48     if (gameOver) {
+msg     7 : line  50       gameOverElement.innerText = 'Game Over';
+msg     1 : line  29     } else {
+msg   100 : line  22       // Otherwise, clear the message
+msg   100 : line  23       gameOverElement.innerText = '';
+msg     1 : line   9     }
+msg     1 : line   9   }
+
+msg   101 : line  25   function displayAllClearMessage() {
+msg   101 : line  27     let allClearElement = document.getElementById('all-clear');
+msg   102 : line   3     if (allClearElement === null) {
+msg   101 : line  30       allClearElement = document.createElement('div');
+msg   101 : line  31       allClearElement.id = 'all-clear';
+msg   112 : line   6       // Apply the same styles as the Game Over message
+msg   101 : line  32       allClearElement.style.fontSize = '40px';
+msg   101 : line  33       allClearElement.style.color = 'green';
+msg   101 : line  34       allClearElement.style.position = 'absolute';
+msg   101 : line  35       allClearElement.style.left = '50%';
+msg   101 : line  36       allClearElement.style.top = '50%';
+msg   101 : line  37       allClearElement.style.transform = 'translate(-50%, -50%)';
+msg   112 : line  13       allClearElement.style.padding = '10px';
+msg   105 : line  35       allClearElement.style.backgroundColor = 'white';
+msg   105 : line  36       allClearElement.style.border = '5px solid green';    
+msg   101 : line  38       document.body.appendChild(allClearElement);
+msg     1 : line   9     }
+msg   102 : line  14     allClearElement.innerText = 'All Clear!';
+msg     1 : line   9   }
+
