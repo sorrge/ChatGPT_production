@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ genre }}</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>{{ genre }}</h1>
+  <p>{{ description }}</p>
+  <h2>Index</h2>
+  <ul>
+    {% for work in works %}
+      <li>
+        <a href="#{{ work.title.lower().replace(' ', '_') }}">{{ work.title }}</a>
+        by
+{% if work.author == 'Unknown' %}
+  Unknown Author
+{% else %}
+  {{ work.author }}
+{% endif %}
+({%- if work.publication_year == 'unknown' -%}
+   Unknown
+ {%- elif work.publication_year | int < 0 -%}
+   {{ -(work.publication_year | int) }} B.C.
+ {%- else -%}
+   {{ work.publication_year | int }}
+ {%- endif -%})
+      </li>
+    {% endfor %}
+  </ul>
+  {% for work in works %}
+  <h3 id="{{ work.title.lower().replace(' ', '_') }}" class="work-header">
+{{ work.title }} by
+{% if work.author == 'Unknown' %}
+  Unknown Author
+{% else %}
+  {{ work.author }}
+{% endif %}
+ ({%- if work.publication_year == 'unknown' -%}
+   Unknown
+ {%- elif work.publication_year | int < 0 -%}
+   {{ -(work.publication_year | int) }} B.C.
+ {%- else -%}
+   {{ work.publication_year | int }}
+ {%- endif -%})
+</h3>
+<p class="summary-box">{{ work.summary | replace('\n', '<br>') | safe }}</p>
+  {% endfor %}
+</body>
+</html>

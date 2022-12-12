@@ -1,0 +1,36 @@
+table {
+    border-collapse: collapse;
+    border-spacing: 10px;
+}
+
+tr {
+    border: 2px solid white;
+    background-color: #f2f2f2;
+    margin-bottom: 10px;
+}
+
+td {
+    padding: 10px;
+}
+
+td.genre-name {
+    font-weight: bold;
+    font-size: larger;
+}
+
+/* Define a CSS style for summary boxes */
+.summary-box {
+    background-color: #f2f2f2;
+    padding: 10px;
+    max-width: 800px;
+}
+
+.work-header {
+    margin-top: 50px;
+}
+
+/* Add a left margin to the body element */
+body {
+    margin-left: 100px;
+    margin-bottom: 100px;
+}
